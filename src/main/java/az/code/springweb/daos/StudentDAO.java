@@ -14,5 +14,7 @@ public interface StudentDAO {
 
     Student save(Student student);
 
+    void createStudents(List<Student> students);
+
     Student remove(int id);
 }

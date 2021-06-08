@@ -14,6 +14,8 @@ public interface StudentService {
 
     Student save(Student student);
 
+    void createStudents(List<Student> students);
+
     Student remove(int id);
 
     List<Student> getTopTen();

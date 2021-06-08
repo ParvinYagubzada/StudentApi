@@ -82,6 +82,20 @@ public class StudentDAOMemoryImpl implements StudentDAO {
     }
 
     @Override
+    public void createStudents(List<Student> students) {
+        for (Student student : students) {
+            this.students.add(student.toBuilder()
+                    .id(Random.getId())
+                    .grades(student.getGrades().stream()
+                            .map(grade -> grade.toBuilder()
+                                    .id(Random.getGradeId())
+                                    .build())
+                            .collect(Collectors.toList()))
+                    .build());
+        }
+    }
+
+    @Override
     public Student remove(int id) {
         Student response = null;
 

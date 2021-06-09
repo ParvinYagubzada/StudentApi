@@ -8,7 +8,7 @@ import java.util.List;
 public interface StudentService {
     List<Student> getStudents();
 
-    Student getStudentById(int id);
+    Student getStudentById(Long id);
 
     List<Student> find(String name, String surname);
 
@@ -16,7 +16,7 @@ public interface StudentService {
 
     void createStudents(List<Student> students);
 
-    Student remove(int id);
+    Student remove(Long id);
 
     List<Student> getTopTen();
 
@@ -24,9 +24,9 @@ public interface StudentService {
 
     List<Student> getAboveAverage();
 
-    Grade saveGrade(int studentId, Grade grade);
+    Grade saveGrade(Long studentId, Grade grade);
 
-    Grade removeGrade(int studentId, int gradeId);
+    Grade removeGrade(Long studentId, Long gradeId);
 
-    Grade getGradeById(int id, int gradeId);
+    Grade getGradeById(Long id, Long gradeId);
 }

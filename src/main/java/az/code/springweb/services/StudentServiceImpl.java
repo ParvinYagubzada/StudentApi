@@ -5,7 +5,9 @@ import az.code.springweb.models.Grade;
 import az.code.springweb.models.Student;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,29 +18,36 @@ public class StudentServiceImpl implements StudentService {
     @Autowired
     StudentDAO dao;
 
+    @Override
     public List<Student> getStudents() {
         return dao.getAll();
     }
 
-    public Student getStudentById(int id) {
+    @Override
+    public Student getStudentById(Long id) {
         return dao.getById(id);
     }
 
+    @Override
     public List<Student> find(String name, String surname) {
         return dao.find(name, surname);
     }
 
+    @Override
+    @Transactional(rollbackFor = { SQLException.class })//TODO 1: update student not working!
     public Student save(Student student) {
         return dao.save(student);
     }
 
     @Override
+    @Transactional(rollbackFor = { SQLException.class })
     public void createStudents(List<Student> students) {
-
+        dao.createStudents(students);
     }
 
     @Override
-    public Student remove(int id) {
+    @Transactional(rollbackFor = { SQLException.class })
+    public Student remove(Long id) {
         return dao.remove(id);
     }
 
@@ -81,23 +90,26 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Grade saveGrade(int studentId, Grade grade) {
+    @Transactional(rollbackFor = { SQLException.class })
+    public Grade saveGrade(Long studentId, Grade grade) {//TODO 2: Fix update
         Student student = getStudentById(studentId);
         Grade response = null;
         if (student != null) {
-            if (grade.getId() == 0) {
-                response = grade.toBuilder().id(Random.getGradeId()).build();
-                student.getGrades().add(response);
+            if (grade.getId() == null) {
+                student.getGrades().add(grade);
+                response = student.getGrades().get(student.getGrades().size() - 1);
             } else {
                 response = grade;
                 student.getGrades().set(student.getGrades().indexOf(grade), grade);
+                student.getGrades().forEach(grade1 -> System.out.println(grade1.getLessonName()));
             }
         }
         return response;
     }
 
     @Override
-    public Grade removeGrade(int studentId, int gradeId) {
+    @Transactional(rollbackFor = { SQLException.class })
+    public Grade removeGrade(Long studentId, Long gradeId) {
         Student student = getStudentById(studentId);
         Grade response = null;
         if (student != null) {
@@ -112,7 +124,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Grade getGradeById(int studentId, int gradeId) {
+    public Grade getGradeById(Long studentId, Long gradeId) {
         Student student = getStudentById(studentId);
         Grade response = null;
         if (student != null) {

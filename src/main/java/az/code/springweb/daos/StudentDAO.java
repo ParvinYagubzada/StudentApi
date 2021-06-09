@@ -10,11 +10,11 @@ public interface StudentDAO {
 
     List<Student> find(String name, String surname);
 
-    Student getById(int id);
+    Student getById(Long id);
 
     Student save(Student student);
 
     void createStudents(List<Student> students);
 
-    Student remove(int id);
+    Student remove(Long id);
 }

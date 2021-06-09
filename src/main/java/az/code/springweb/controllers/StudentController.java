@@ -32,7 +32,7 @@ public class StudentController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Student> getStudentById(@PathVariable int id) {
+    public ResponseEntity<Student> getStudentById(@PathVariable Long id) {
         Student response = service.getStudentById(id);
         if (response == null)
            throw new StudentNotFound();
@@ -40,7 +40,7 @@ public class StudentController {
     }
 
     @GetMapping("/find")
-    public ResponseEntity<List<Student>> findStudentById(@RequestParam String name, @RequestParam(required = false) String surname) {
+    public ResponseEntity<List<Student>> findStudentById(@RequestParam String name, @RequestParam(required = true) String surname) {
         List<Student> response = service.find(name, surname);
         if (response.size() == 0)
             throw new StudentNotFound();
@@ -52,13 +52,19 @@ public class StudentController {
         return new ResponseEntity<>(service.save(student), HttpStatus.CREATED);
     }
 
+    @PostMapping("/multiple")
+    public ResponseEntity<String> createStudents(@RequestBody List<Student> students) {
+        service.createStudents(students);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
     @PutMapping("/{id}")
-    public ResponseEntity<Student> updateStudent(@PathVariable int id, @RequestBody Student student) {
+    public ResponseEntity<Student> updateStudent(@PathVariable Long id, @RequestBody Student student) {
         return new ResponseEntity<>(service.save(student.toBuilder().id(id).build()), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Student> deleteStudent(@PathVariable int id) {
+    public ResponseEntity<Student> deleteStudent(@PathVariable Long id) {
         Student response = service.remove(id);
         if (response == null)
             throw new StudentNotFound();
@@ -84,7 +90,7 @@ public class StudentController {
     }
 
     @GetMapping("/{id}/grades")
-    public ResponseEntity<List<Grade>> getStudentGrades(@PathVariable int id) {
+    public ResponseEntity<List<Grade>> getStudentGrades(@PathVariable Long id) {
         Student response = service.getStudentById(id);
         if (response == null)
             throw new StudentNotFound();
@@ -92,7 +98,7 @@ public class StudentController {
     }
 
     @GetMapping("/{id}/grades/{gradeId}")
-    public ResponseEntity<Grade> getStudentGrades(@PathVariable int id, @PathVariable int gradeId) {
+    public ResponseEntity<Grade> getStudentGrades(@PathVariable Long id, @PathVariable Long gradeId) {
         Grade response = service.getGradeById(id, gradeId);
         if (response == null)
             throw new StudentNotFound();
@@ -100,7 +106,7 @@ public class StudentController {
     }
 
     @PostMapping("/{id}/grades")
-    public ResponseEntity<Grade> createGrade(@PathVariable int id, @RequestBody Grade grade) {
+    public ResponseEntity<Grade> createGrade(@PathVariable Long id, @RequestBody Grade grade) {
         Grade response = service.saveGrade(id, grade);
         if (response == null)
             throw new StudentNotFound();
@@ -108,7 +114,7 @@ public class StudentController {
     }
 
     @PutMapping("/{id}/grades/{gradeId}")
-    public ResponseEntity<Grade> updateGrade(@PathVariable int id, @PathVariable int gradeId, @RequestBody Grade grade) {
+    public ResponseEntity<Grade> updateGrade(@PathVariable Long id, @PathVariable Long gradeId, @RequestBody Grade grade) {
         Grade response = service.saveGrade(id, grade.toBuilder().id(gradeId).build());
         if (response == null)
             throw new StudentNotFound();
@@ -116,7 +122,7 @@ public class StudentController {
     }
 
     @DeleteMapping("/{id}/grades/{gradeId}")
-    public ResponseEntity<Grade> deleteGrade(@PathVariable int id, @PathVariable int gradeId) {
+    public ResponseEntity<Grade> deleteGrade(@PathVariable Long id, @PathVariable Long gradeId) {
         Grade response = service.removeGrade(id, gradeId);
         if (response == null)
             throw new StudentNotFound();

@@ -4,7 +4,9 @@ import az.code.springweb.models.Grade;
 import az.code.springweb.models.Student;
 import az.code.springweb.services.Random;
 import com.github.javafaker.Faker;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -12,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-@Component
+@Repository
 public class StudentDAOMemoryImpl implements StudentDAO {
     List<Student> students = new ArrayList<>();
 
@@ -54,10 +56,10 @@ public class StudentDAOMemoryImpl implements StudentDAO {
     }
 
     @Override
-    public Student getById(int id) {
+    public Student getById(Long id) {
         Student response = null;
         for (Student student : students) {
-            if (student.getId() == id)
+            if (student.getId().equals(id))
                 response = student;
         }
         return response;
@@ -67,11 +69,11 @@ public class StudentDAOMemoryImpl implements StudentDAO {
     public Student save(Student student) {
         Student response = student;
 
-        if (response.getId() == 0)
+        if (response.getId() == null)
             response.setId(Random.getId());
 
         for (Student entry : students) {
-            if (entry.getId() == student.getId()) {
+            if (entry.getId().equals(student.getId())) {
                 entry = student;
                 response = entry;
                 break;
@@ -96,11 +98,11 @@ public class StudentDAOMemoryImpl implements StudentDAO {
     }
 
     @Override
-    public Student remove(int id) {
+    public Student remove(Long id) {
         Student response = null;
 
         for (Student entry : students) {
-            if (entry.getId() == id) {
+            if (entry.getId().equals(id)) {
                 response = entry;
                 students.remove(entry);
                 break;

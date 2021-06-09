@@ -4,8 +4,6 @@ import az.code.springweb.models.Grade;
 import az.code.springweb.models.Student;
 import az.code.springweb.services.Random;
 import com.github.javafaker.Faker;
-import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;

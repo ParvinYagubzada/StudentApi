@@ -2,8 +2,6 @@ package az.code.springweb.daos;
 
 import az.code.springweb.exceptions.StudentNotFound;
 import az.code.springweb.models.Student;
-import org.springframework.context.annotation.Primary;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;

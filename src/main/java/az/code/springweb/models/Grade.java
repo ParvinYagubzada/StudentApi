@@ -1,7 +1,6 @@
 package az.code.springweb.models;
 
 import lombok.*;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;

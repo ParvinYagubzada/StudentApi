@@ -4,7 +4,6 @@ import az.code.springweb.exceptions.StudentNotFound;
 import az.code.springweb.models.Grade;
 import az.code.springweb.models.Student;
 import az.code.springweb.services.StudentService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,8 +14,11 @@ import java.util.List;
 @RequestMapping("/api/students")
 public class StudentController {
 
-    @Autowired
     StudentService service;
+
+    public StudentController(StudentService service) {
+        this.service = service;
+    }
 
     @ExceptionHandler(StudentNotFound.class)
     public ResponseEntity<String> handleNotFound(StudentNotFound e) {
@@ -40,7 +42,7 @@ public class StudentController {
     }
 
     @GetMapping("/find")
-    public ResponseEntity<List<Student>> findStudentById(@RequestParam String name, @RequestParam(required = true) String surname) {
+    public ResponseEntity<List<Student>> findStudentById(@RequestParam String name, @RequestParam String surname) {
         List<Student> response = service.find(name, surname);
         if (response.size() == 0)
             throw new StudentNotFound();

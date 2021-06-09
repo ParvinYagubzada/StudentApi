@@ -18,15 +18,15 @@ public interface StudentService {
 
     Student remove(Long id);
 
-    List<Student> getTopTen();
-
-    List<Student> getHigherThan(int grade);
-
-    List<Student> getAboveAverage();
+    Grade getGradeById(Long id, Long gradeId);
 
     Grade saveGrade(Long studentId, Grade grade);
 
     Grade removeGrade(Long studentId, Long gradeId);
 
-    Grade getGradeById(Long id, Long gradeId);
+    List<Student> getTopTen();
+
+    List<Student> getHigherThan(int grade);
+
+    List<Student> getAboveAverage();
 }

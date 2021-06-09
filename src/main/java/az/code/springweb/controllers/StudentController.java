@@ -1,5 +1,6 @@
 package az.code.springweb.controllers;
 
+import az.code.springweb.exceptions.GradeNotFound;
 import az.code.springweb.exceptions.StudentNotFound;
 import az.code.springweb.models.Grade;
 import az.code.springweb.models.Student;
@@ -22,6 +23,11 @@ public class StudentController {
 
     @ExceptionHandler(StudentNotFound.class)
     public ResponseEntity<String> handleNotFound(StudentNotFound e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(GradeNotFound.class)
+    public ResponseEntity<String> handleNotFound(GradeNotFound e) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
     }
 
@@ -100,26 +106,18 @@ public class StudentController {
     }
 
     @GetMapping("/{id}/grades/{gradeId}")
-    public ResponseEntity<Grade> getStudentGrades(@PathVariable Long id, @PathVariable Long gradeId) {
-        Grade response = service.getGradeById(id, gradeId);
-        if (response == null)
-            throw new StudentNotFound();
-        return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
+    public ResponseEntity<Grade> getStudentGrade(@PathVariable Long id, @PathVariable Long gradeId) {
+        return new ResponseEntity<>(service.getGradeById(id, gradeId), HttpStatus.ACCEPTED);
     }
 
     @PostMapping("/{id}/grades")
     public ResponseEntity<Grade> createGrade(@PathVariable Long id, @RequestBody Grade grade) {
-        Grade response = service.saveGrade(id, grade);
-        if (response == null)
-            throw new StudentNotFound();
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return new ResponseEntity<>(service.saveGrade(id, grade), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}/grades/{gradeId}")
     public ResponseEntity<Grade> updateGrade(@PathVariable Long id, @PathVariable Long gradeId, @RequestBody Grade grade) {
         Grade response = service.saveGrade(id, grade.toBuilder().id(gradeId).build());
-        if (response == null)
-            throw new StudentNotFound();
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 

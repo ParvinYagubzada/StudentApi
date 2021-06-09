@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Repository("memory")
-public class StudentDAOMemoryImpl implements StudentDAO {
+public class StudentDAOMemory implements StudentDAO {
     List<Student> students = new ArrayList<>();
 
     {
@@ -82,7 +82,7 @@ public class StudentDAOMemoryImpl implements StudentDAO {
     }
 
     @Override
-    public void createStudents(List<Student> students) {
+    public void create(List<Student> students) {
         for (Student student : students) {
             this.students.add(student.toBuilder()
                     .id(Random.getId())
@@ -107,6 +107,51 @@ public class StudentDAOMemoryImpl implements StudentDAO {
             }
         }
 
+        return response;
+    }
+
+    @Override
+    public Grade getGradeById(Long studentId, Long gradeId) {
+        Student student = getById(studentId);
+        Grade response = null;
+        if (student != null) {
+            List<Grade> grades = student.getGrades();
+            Grade search = Grade.builder().id(gradeId).build();
+            if (grades.contains(search)) {
+                response = grades.get(grades.indexOf(search));
+            }
+        }
+        return response;
+    }
+
+    @Override
+    public Grade saveGrade(Long studentId, Grade grade) {
+        Student student = getById(studentId);
+        Grade response = null;
+        if (student != null) {
+            if (grade.getId() == null) {
+                student.getGrades().add(grade);
+                response = student.getGrades().get(student.getGrades().size() - 1);
+            } else {
+                response = grade;
+                student.getGrades().set(student.getGrades().indexOf(grade), grade);
+            }
+        }
+        return response;
+    }
+
+    @Override
+    public Grade removeGrade(Long studentId, Long gradeId) {
+        Student student = getById(studentId);
+        Grade response = null;
+        if (student != null) {
+            List<Grade> grades = student.getGrades();
+            Grade search = Grade.builder().id(gradeId).build();
+            if (grades.contains(search)) {
+                response = grades.get(grades.indexOf(search));
+                grades.remove(response);
+            }
+        }
         return response;
     }
 }

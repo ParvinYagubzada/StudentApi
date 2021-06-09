@@ -21,6 +21,8 @@ public class Grade {
     private int grade;
     @Column(name = "creation_time")
     private LocalDateTime creationTime;
+    @Column(name = "student_id")
+    private Long studentId;
 
     @Override
     public boolean equals(Object obj) {

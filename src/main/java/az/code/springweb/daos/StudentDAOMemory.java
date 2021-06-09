@@ -98,7 +98,6 @@ public class StudentDAOMemory implements StudentDAO {
     @Override
     public Student remove(Long id) {
         Student response = null;
-
         for (Student entry : students) {
             if (entry.getId().equals(id)) {
                 response = entry;
@@ -106,7 +105,6 @@ public class StudentDAOMemory implements StudentDAO {
                 break;
             }
         }
-
         return response;
     }
 

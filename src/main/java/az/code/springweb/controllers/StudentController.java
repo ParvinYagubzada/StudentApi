@@ -1,14 +1,18 @@
 package az.code.springweb.controllers;
 
+import az.code.springweb.dtos.GradeDTO;
+import az.code.springweb.dtos.StudentDTO;
 import az.code.springweb.exceptions.GradeNotFound;
 import az.code.springweb.exceptions.StudentNotFound;
 import az.code.springweb.models.Grade;
 import az.code.springweb.models.Student;
 import az.code.springweb.services.StudentService;
+import az.code.springweb.util.Paging;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -33,26 +37,33 @@ public class StudentController {
 
     @GetMapping
     public ResponseEntity<List<Student>> getStudents() {
-        List<Student> response = service.getStudents();
-        if (response.size() == 0)
-            throw new StudentNotFound();
-        return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(service.getStudents(), HttpStatus.ACCEPTED);
+    }
+
+    @GetMapping("/paging")
+    public ResponseEntity<Paging<Student>> getStudents(HttpServletRequest request,
+                                                       @RequestParam(required = false, defaultValue = "10") int limit,
+                                                       @RequestParam(required = false, defaultValue = "0") int pageIndex) {
+        return new ResponseEntity<>(service.getStudents(pageIndex, limit, request.getRequestURL().toString()), HttpStatus.ACCEPTED);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Student> getStudentById(@PathVariable Long id) {
-        Student response = service.getStudentById(id);
-        if (response == null)
-           throw new StudentNotFound();
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(service.getStudentById(id), HttpStatus.OK);
     }
 
     @GetMapping("/find")
-    public ResponseEntity<List<Student>> findStudentById(@RequestParam String name, @RequestParam String surname) {
-        List<Student> response = service.find(name, surname);
-        if (response.size() == 0)
-            throw new StudentNotFound();
-        return new ResponseEntity<>(response, HttpStatus.OK);
+    public ResponseEntity<List<Student>> findStudentByNameAndSurname(@RequestParam String name, @RequestParam String surname) {
+        return new ResponseEntity<>(service.find(name, surname), HttpStatus.OK);
+    }
+
+    @GetMapping("/find/paging")
+    public ResponseEntity<Paging<Student>> findStudentByNameAndSurname(HttpServletRequest request,
+                                                                       @RequestParam String name,
+                                                                       @RequestParam String surname,
+                                                                       @RequestParam(required = false, defaultValue = "10") int limit,
+                                                                       @RequestParam(required = false, defaultValue = "0") int pageIndex) {
+        return new ResponseEntity<>(service.find(name, surname, pageIndex, limit, request.getRequestURL().toString()), HttpStatus.ACCEPTED);
     }
 
     @PostMapping
@@ -73,36 +84,12 @@ public class StudentController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Student> deleteStudent(@PathVariable Long id) {
-        Student response = service.remove(id);
-        if (response == null)
-            throw new StudentNotFound();
-        return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
-    }
-
-    @GetMapping("/topTen")
-    public ResponseEntity<List<Student>> getTopTen() {
-        List<Student> response = service.getTopTen();
-        return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
-    }
-
-    @GetMapping("/higherThan")
-    public ResponseEntity<List<Student>> getHigherThan(@RequestParam int value) {
-        List<Student> response = service.getHigherThan(value);
-        return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
-    }
-
-    @GetMapping("/aboveAverage")
-    public ResponseEntity<List<Student>> getAboveAverage() {
-        List<Student> response = service.getAboveAverage();
-        return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(service.remove(id), HttpStatus.NO_CONTENT);
     }
 
     @GetMapping("/{id}/grades")
     public ResponseEntity<List<Grade>> getStudentGrades(@PathVariable Long id) {
-        Student response = service.getStudentById(id);
-        if (response == null)
-            throw new StudentNotFound();
-        return new ResponseEntity<>(response.getGrades(), HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(service.getStudentById(id).getGrades(), HttpStatus.ACCEPTED);
     }
 
     @GetMapping("/{id}/grades/{gradeId}")
@@ -123,9 +110,78 @@ public class StudentController {
 
     @DeleteMapping("/{id}/grades/{gradeId}")
     public ResponseEntity<Grade> deleteGrade(@PathVariable Long id, @PathVariable Long gradeId) {
-        Grade response = service.removeGrade(id, gradeId);
-        if (response == null)
-            throw new StudentNotFound();
-        return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(service.removeGrade(id, gradeId), HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/topTen")
+    public ResponseEntity<List<Student>> getTop(@RequestParam int value) {
+        return new ResponseEntity<>(service.getTop(value), HttpStatus.ACCEPTED);
+    }
+
+    @GetMapping("/topTen/paging")
+    public ResponseEntity<Paging<Student>> getTop(HttpServletRequest request,
+                                                  @RequestParam int value,
+                                                  @RequestParam(required = false, defaultValue = "10") int limit,
+                                                  @RequestParam(required = false, defaultValue = "0") int pageIndex) {
+        return new ResponseEntity<>(service.getTop(value, pageIndex, limit, request.getRequestURL().toString()), HttpStatus.ACCEPTED);
+    }
+
+    @GetMapping("/higherThan")
+    public ResponseEntity<List<Student>> getHigherThan(@RequestParam int value) {
+        return new ResponseEntity<>(service.getHigherThan(value), HttpStatus.ACCEPTED);
+    }
+
+    @GetMapping("/higherThan/paging")
+    public ResponseEntity<Paging<Student>> getHigherThan(
+            HttpServletRequest request,
+            @RequestParam int value,
+            @RequestParam(required = false, defaultValue = "10") int limit,
+            @RequestParam(required = false, defaultValue = "0") int pageIndex) {
+        return new ResponseEntity<>(service.getHigherThan(value, pageIndex, limit, request.getRequestURL().toString()), HttpStatus.ACCEPTED);
+    }
+
+    @GetMapping("/aboveAverage")
+    public ResponseEntity<List<Student>> getAboveAverage() {
+        return new ResponseEntity<>(service.getAboveAverage(), HttpStatus.ACCEPTED);
+    }
+
+    @GetMapping("/aboveAverage/paging")
+    public ResponseEntity<Paging<Student>> getAboveAverage(
+            HttpServletRequest request,
+            @RequestParam(required = false, defaultValue = "10") int limit,
+            @RequestParam(required = false, defaultValue = "0") int pageIndex) {
+        return new ResponseEntity<>(service.getAboveAverage(pageIndex, limit, request.getRequestURL().toString()), HttpStatus.ACCEPTED);
+    }
+
+    @GetMapping("/studentNamedHigherThan")
+    public ResponseEntity<List<StudentDTO>> getStudentNamedHigherThan(@RequestParam String name, @RequestParam int value) {
+        return new ResponseEntity<>(service.getStudentNamedHigherThan(name, value), HttpStatus.ACCEPTED);
+    }
+
+    @GetMapping("/studentNamedHigherThan/paging")
+    public ResponseEntity<Paging<StudentDTO>> getStudentNamedHigherThan(
+            HttpServletRequest request,
+            @RequestParam String name,
+            @RequestParam int value,
+            @RequestParam(required = false, defaultValue = "10") int limit,
+            @RequestParam(required = false, defaultValue = "0") int pageIndex) {
+        return new ResponseEntity<>(service.getStudentNamedHigherThan(name, value, pageIndex, limit, request.getRequestURL().toString()),
+                HttpStatus.ACCEPTED);
+    }
+
+    @GetMapping("/gradeNamedHigherThan")
+    public ResponseEntity<List<GradeDTO>> getGradeNamedHigherThan(@RequestParam String name, @RequestParam int value) {
+        return new ResponseEntity<>(service.getGradeNamedHigherThan(name, value), HttpStatus.ACCEPTED);
+    }
+
+    @GetMapping("/gradeNamedHigherThan/paging")
+    public ResponseEntity<Paging<GradeDTO>> getGradeNamedHigherThan(
+            HttpServletRequest request,
+            @RequestParam String name,
+            @RequestParam int value,
+            @RequestParam(required = false, defaultValue = "10") int limit,
+            @RequestParam(required = false, defaultValue = "0") int pageIndex) {
+        return new ResponseEntity<>(service.getGradeNamedHigherThan(name, value, pageIndex, limit, request.getRequestURL().toString()),
+                HttpStatus.ACCEPTED);
     }
 }

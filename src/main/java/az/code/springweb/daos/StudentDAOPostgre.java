@@ -36,18 +36,14 @@ public class StudentDAOPostgre implements StudentDAO {
 
     @Override
     public Student getById(Long id) {
-        return manager.find(Student.class, id);
+        return getIfExists(id);
     }
 
     @Override
-    @Transactional(rollbackFor = {SQLException.class}) //TODO 4: Make better!
+    @Transactional(rollbackFor = {SQLException.class})
     public Student save(Student student) {
         if (student.getId() != null) {
-            Student temp = manager.find(Student.class, student.getId());
-            if (temp != null)
-                manager.detach(temp);
-            else
-                throw new StudentNotFound();
+            getIfExists(student.getId());
         }
         return manager.merge(student);
     }
@@ -63,13 +59,14 @@ public class StudentDAOPostgre implements StudentDAO {
     @Override
     @Transactional(rollbackFor = {SQLException.class})
     public Student remove(Long id) {
-        Student response = manager.find(Student.class, id);
+        Student response = getIfExists(id);
         manager.remove(response);
         return response;
     }
 
     @Override
     public Grade getGradeById(Long studentId, Long gradeId) {
+        getIfExists(studentId);
         List<Grade> grades = manager
                 .createQuery("SELECT grade FROM Grade grade " +
                         "WHERE grade.studentId = :studentId " +
@@ -113,7 +110,7 @@ public class StudentDAOPostgre implements StudentDAO {
     }
 
     private Student getIfExists(Long studentId) {
-        Student student = getById(studentId);
+        Student student = manager.find(Student.class, studentId);
         if (student != null) {
             return student;
         } else {

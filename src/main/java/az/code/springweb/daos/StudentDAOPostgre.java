@@ -11,8 +11,7 @@ import javax.persistence.PersistenceContext;
 import java.util.List;
 
 
-@Primary
-@Repository
+@Repository("postgre")
 public class StudentDAOPostgre implements StudentDAO {
 
     @PersistenceContext

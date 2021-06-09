@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-@Repository
+@Repository("memory")
 public class StudentDAOMemoryImpl implements StudentDAO {
     List<Student> students = new ArrayList<>();
 

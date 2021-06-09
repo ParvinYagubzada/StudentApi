@@ -4,6 +4,7 @@ import az.code.springweb.daos.StudentDAO;
 import az.code.springweb.models.Grade;
 import az.code.springweb.models.Student;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,8 +16,11 @@ import java.util.stream.Collectors;
 @Service
 public class StudentServiceImpl implements StudentService {
 
-    @Autowired
     StudentDAO dao;
+
+    public StudentServiceImpl(@Qualifier("postgre") StudentDAO dao) {
+        this.dao = dao;
+    }
 
     @Override
     public List<Student> getStudents() {
@@ -34,7 +38,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    @Transactional(rollbackFor = { SQLException.class })//TODO 1: update student not working!
+    @Transactional(rollbackFor = { SQLException.class })//TODO 1: update student does not work as intended!
     public Student save(Student student) {
         return dao.save(student);
     }
@@ -90,8 +94,8 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    @Transactional(rollbackFor = { SQLException.class })
-    public Grade saveGrade(Long studentId, Grade grade) {//TODO 2: Fix update
+    @Transactional(rollbackFor = { SQLException.class })//TODO 2: update grade does not work at all!
+    public Grade saveGrade(Long studentId, Grade grade) {
         Student student = getStudentById(studentId);
         Grade response = null;
         if (student != null) {
@@ -108,7 +112,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    @Transactional(rollbackFor = { SQLException.class })
+    @Transactional(rollbackFor = { SQLException.class })//TODO 3: remove grade does not work as intended!
     public Grade removeGrade(Long studentId, Long gradeId) {
         Student student = getStudentById(studentId);
         Grade response = null;

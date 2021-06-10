@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/students")
@@ -114,74 +115,79 @@ public class StudentController {
     }
 
     @GetMapping("/topTen")
-    public ResponseEntity<List<Student>> getTop(@RequestParam int value) {
+    public ResponseEntity<?> getTop(
+            HttpServletRequest request,
+            @RequestParam int value,
+            @RequestParam(required = false) Optional<Integer> limit,
+            @RequestParam(required = false) Optional<Integer> pageIndex) {
+        if (limit.isPresent())
+            return new ResponseEntity<>(service.getTop(value,
+                    pageIndex.orElse(0),
+                    limit.get(),
+                    request.getRequestURL().toString() + "?" + request.getQueryString()),
+                    HttpStatus.ACCEPTED);
         return new ResponseEntity<>(service.getTop(value), HttpStatus.ACCEPTED);
     }
 
-    @GetMapping("/topTen/paging")
-    public ResponseEntity<Paging<Student>> getTop(HttpServletRequest request,
-                                                  @RequestParam int value,
-                                                  @RequestParam(required = false, defaultValue = "10") int limit,
-                                                  @RequestParam(required = false, defaultValue = "0") int pageIndex) {
-        return new ResponseEntity<>(service.getTop(value, pageIndex, limit, request.getRequestURL().toString()), HttpStatus.ACCEPTED);
-    }
-
     @GetMapping("/higherThan")
-    public ResponseEntity<List<Student>> getHigherThan(@RequestParam int value) {
+    public ResponseEntity<?> getHigherThan(
+            HttpServletRequest request,
+            @RequestParam int value,
+            @RequestParam(required = false) Optional<Integer> limit,
+            @RequestParam(required = false) Optional<Integer> pageIndex) {
+        if (limit.isPresent())
+            return new ResponseEntity<>(service.getHigherThan(value,
+                    pageIndex.orElse(0),
+                    limit.get(),
+                    request.getRequestURL().toString() + "?" + request.getQueryString()),
+                    HttpStatus.ACCEPTED);
+        System.out.println("Data");
         return new ResponseEntity<>(service.getHigherThan(value), HttpStatus.ACCEPTED);
     }
 
-    @GetMapping("/higherThan/paging")
-    public ResponseEntity<Paging<Student>> getHigherThan(
-            HttpServletRequest request,
-            @RequestParam int value,
-            @RequestParam(required = false, defaultValue = "10") int limit,
-            @RequestParam(required = false, defaultValue = "0") int pageIndex) {
-        return new ResponseEntity<>(service.getHigherThan(value, pageIndex, limit, request.getRequestURL().toString()), HttpStatus.ACCEPTED);
-    }
-
     @GetMapping("/aboveAverage")
-    public ResponseEntity<List<Student>> getAboveAverage() {
+    public ResponseEntity<?> getAboveAverage(
+            HttpServletRequest request,
+            @RequestParam(required = false) Optional<Integer> limit,
+            @RequestParam(required = false) Optional<Integer> pageIndex) {
+        if (limit.isPresent())
+            return new ResponseEntity<>(service.getAboveAverage(
+                    pageIndex.orElse(0),
+                    limit.get(),
+                    request.getRequestURL().toString() + "?" + request.getQueryString()),
+                    HttpStatus.ACCEPTED);
         return new ResponseEntity<>(service.getAboveAverage(), HttpStatus.ACCEPTED);
     }
 
-    @GetMapping("/aboveAverage/paging")
-    public ResponseEntity<Paging<Student>> getAboveAverage(
-            HttpServletRequest request,
-            @RequestParam(required = false, defaultValue = "10") int limit,
-            @RequestParam(required = false, defaultValue = "0") int pageIndex) {
-        return new ResponseEntity<>(service.getAboveAverage(pageIndex, limit, request.getRequestURL().toString()), HttpStatus.ACCEPTED);
-    }
-
     @GetMapping("/studentNamedHigherThan")
-    public ResponseEntity<List<StudentDTO>> getStudentNamedHigherThan(@RequestParam String name, @RequestParam int value) {
+    public ResponseEntity<?> getStudentNamedHigherThan(
+            HttpServletRequest request,
+            @RequestParam String name,
+            @RequestParam int value,
+            @RequestParam(required = false) Optional<Integer> limit,
+            @RequestParam(required = false) Optional<Integer> pageIndex) {
+        if (limit.isPresent())
+            return new ResponseEntity<>(service.getStudentNamedHigherThan(name, value,
+                    pageIndex.orElse(0),
+                    limit.get(),
+                    request.getRequestURL().toString() + "?" + request.getQueryString()),
+                    HttpStatus.ACCEPTED);
         return new ResponseEntity<>(service.getStudentNamedHigherThan(name, value), HttpStatus.ACCEPTED);
     }
 
-    @GetMapping("/studentNamedHigherThan/paging")
-    public ResponseEntity<Paging<StudentDTO>> getStudentNamedHigherThan(
-            HttpServletRequest request,
-            @RequestParam String name,
-            @RequestParam int value,
-            @RequestParam(required = false, defaultValue = "10") int limit,
-            @RequestParam(required = false, defaultValue = "0") int pageIndex) {
-        return new ResponseEntity<>(service.getStudentNamedHigherThan(name, value, pageIndex, limit, request.getRequestURL().toString()),
-                HttpStatus.ACCEPTED);
-    }
-
     @GetMapping("/gradeNamedHigherThan")
-    public ResponseEntity<List<GradeDTO>> getGradeNamedHigherThan(@RequestParam String name, @RequestParam int value) {
-        return new ResponseEntity<>(service.getGradeNamedHigherThan(name, value), HttpStatus.ACCEPTED);
-    }
-
-    @GetMapping("/gradeNamedHigherThan/paging")
-    public ResponseEntity<Paging<GradeDTO>> getGradeNamedHigherThan(
+    public ResponseEntity<?> getGradeNamedHigherThan(
             HttpServletRequest request,
             @RequestParam String name,
             @RequestParam int value,
-            @RequestParam(required = false, defaultValue = "10") int limit,
-            @RequestParam(required = false, defaultValue = "0") int pageIndex) {
-        return new ResponseEntity<>(service.getGradeNamedHigherThan(name, value, pageIndex, limit, request.getRequestURL().toString()),
-                HttpStatus.ACCEPTED);
+            @RequestParam(required = false) Optional<Integer> limit,
+            @RequestParam(required = false) Optional<Integer> pageIndex) {
+        if (limit.isPresent())
+            return new ResponseEntity<>(service.getGradeNamedHigherThan(name, value,
+                    pageIndex.orElse(0),
+                    limit.get(),
+                    request.getRequestURL().toString() + "?" + request.getQueryString()),
+                    HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(service.getGradeNamedHigherThan(name, value), HttpStatus.ACCEPTED);
     }
 }

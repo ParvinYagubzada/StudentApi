@@ -1,5 +1,6 @@
 package az.code.springweb.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -22,6 +23,7 @@ public class Grade {
     @Column(name = "creation_time")
     private LocalDateTime creationTime;
     @Column(name = "student_id")
+    @JsonIgnore
     private Long studentId;
 
     @Override

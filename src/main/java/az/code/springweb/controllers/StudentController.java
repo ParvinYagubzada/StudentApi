@@ -52,18 +52,16 @@ public class StudentController {
     }
 
     @GetMapping("/find")
-    public ResponseEntity<List<Student>> findStudentByNameAndSurname(@RequestParam String name, @RequestParam String surname) {
-        return new ResponseEntity<>(service.find(name, surname), HttpStatus.OK);
-    }
-
-    @GetMapping("/find/paging")
-    public ResponseEntity<Paging<Student>> findStudentByNameAndSurname(
+    public ResponseEntity<?> findStudentByNameAndSurname(
             HttpServletRequest request,
             @RequestParam String name,
             @RequestParam String surname,
-            @RequestParam(required = false, defaultValue = "10") int limit,
-            @RequestParam(required = false, defaultValue = "0") int pageIndex) {
-        return new ResponseEntity<>(service.find(name, surname, pageIndex, limit, request.getRequestURL().toString()), HttpStatus.ACCEPTED);
+            @RequestParam(required = false) Optional<Integer> limit,
+            @RequestParam(required = false) Optional<Integer> pageIndex) {
+        if (limit.isPresent())
+            return new ResponseEntity<>(service.find(name, surname, pageIndex.orElse(0), limit.get(), request.getRequestURL().toString()),
+                    HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(service.find(name, surname), HttpStatus.OK);
     }
 
     @PostMapping

@@ -49,7 +49,7 @@ public class StudentDAOMemory implements StudentDAO {
     public List<Student> find(String name, String surname) {
         List<Student> result = new ArrayList<>();
         for (Student student : students) {
-            if (student.getName().equals(name) && student.getSurname().equals(surname))
+            if (student.getName().startsWith(name) && student.getSurname().startsWith(surname))
                 result.add(student);
         }
         return result;

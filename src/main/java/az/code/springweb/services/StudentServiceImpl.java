@@ -5,7 +5,7 @@ import az.code.springweb.dtos.GradeDTO;
 import az.code.springweb.dtos.StudentDTO;
 import az.code.springweb.models.Grade;
 import az.code.springweb.models.Student;
-import az.code.springweb.util.Paging;
+import az.code.springweb.utils.Paging;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;

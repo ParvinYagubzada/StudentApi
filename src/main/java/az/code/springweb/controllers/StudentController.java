@@ -5,7 +5,7 @@ import az.code.springweb.exceptions.StudentNotFound;
 import az.code.springweb.models.Grade;
 import az.code.springweb.models.Student;
 import az.code.springweb.services.StudentService;
-import az.code.springweb.util.Paging;
+import az.code.springweb.utils.Paging;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -82,7 +82,7 @@ public class StudentController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Student> deleteStudent(@PathVariable Long id) {
-        return new ResponseEntity<>(service.remove(id), HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(service.remove(id), HttpStatus.OK);
     }
 
     @GetMapping("/{id}/grades")

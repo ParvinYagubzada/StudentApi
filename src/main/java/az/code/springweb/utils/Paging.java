@@ -1,4 +1,4 @@
-package az.code.springweb.util;
+package az.code.springweb.utils;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

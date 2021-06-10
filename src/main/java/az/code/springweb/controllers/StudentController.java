@@ -1,13 +1,11 @@
 package az.code.springweb.controllers;
 
-import az.code.springweb.dtos.GradeDTO;
-import az.code.springweb.dtos.StudentDTO;
 import az.code.springweb.exceptions.GradeNotFound;
 import az.code.springweb.exceptions.StudentNotFound;
 import az.code.springweb.models.Grade;
 import az.code.springweb.models.Student;
 import az.code.springweb.services.StudentService;
-import az.code.springweb.util.Paging;
+import az.code.springweb.utils.Paging;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

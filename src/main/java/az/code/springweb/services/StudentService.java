@@ -4,7 +4,7 @@ import az.code.springweb.dtos.StudentDTO;
 import az.code.springweb.models.Grade;
 import az.code.springweb.dtos.GradeDTO;
 import az.code.springweb.models.Student;
-import az.code.springweb.util.Paging;
+import az.code.springweb.utils.Paging;
 
 import java.util.List;
 

@@ -8,8 +8,10 @@ import az.code.springweb.services.StudentService;
 import az.code.springweb.utils.Paging;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +24,26 @@ public class StudentController {
 
     public StudentController(StudentService service) {
         this.service = service;
+    }
+
+    @GetMapping("/any")
+    public Student anyAccess() {
+        return Student.builder().name("any").build();
+    }
+
+    @GetMapping("/user")
+    public Student userAccess() {
+        return Student.builder().name("user").build();
+    }
+
+    @GetMapping("/admin")
+    public Student adminAccess() {
+        return Student.builder().name("admin").build();
+    }
+
+    @GetMapping("/auth")
+    public Student auth() {
+        return Student.builder().name("auth").build();
     }
 
     @ExceptionHandler(StudentNotFound.class)
@@ -52,17 +74,15 @@ public class StudentController {
     }
 
     @GetMapping("/find")
-    public ResponseEntity<List<Student>> findStudentByNameAndSurname(@RequestParam String name, @RequestParam String surname) {
+    public ResponseEntity<?> findStudentByNameAndSurname(
+            HttpServletRequest request,
+            @RequestParam String name,
+            @RequestParam String surname,
+            @RequestParam(required = false) Optional<Integer> limit,
+            @RequestParam(required = false) Optional<Integer> pageIndex) {
+        if (limit.isPresent())
+            return new ResponseEntity<>(service.find(name, surname, pageIndex.orElse(0), limit.get(), request.getRequestURL().toString()), HttpStatus.ACCEPTED);
         return new ResponseEntity<>(service.find(name, surname), HttpStatus.OK);
-    }
-
-    @GetMapping("/find/paging")
-    public ResponseEntity<Paging<Student>> findStudentByNameAndSurname(HttpServletRequest request,
-                                                                       @RequestParam String name,
-                                                                       @RequestParam String surname,
-                                                                       @RequestParam(required = false, defaultValue = "10") int limit,
-                                                                       @RequestParam(required = false, defaultValue = "0") int pageIndex) {
-        return new ResponseEntity<>(service.find(name, surname, pageIndex, limit, request.getRequestURL().toString()), HttpStatus.ACCEPTED);
     }
 
     @PostMapping
@@ -86,6 +106,7 @@ public class StudentController {
         return new ResponseEntity<>(service.remove(id), HttpStatus.OK);
     }
 
+    @RolesAllowed("ADMIN")
     @GetMapping("/{id}/grades")
     public ResponseEntity<List<Grade>> getStudentGrades(@PathVariable Long id) {
         return new ResponseEntity<>(service.getStudentById(id).getGrades(), HttpStatus.ACCEPTED);

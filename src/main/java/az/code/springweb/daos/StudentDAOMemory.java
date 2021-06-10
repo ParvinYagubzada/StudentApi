@@ -1,5 +1,7 @@
 package az.code.springweb.daos;
 
+import az.code.springweb.exceptions.GradeNotFound;
+import az.code.springweb.exceptions.StudentNotFound;
 import az.code.springweb.models.Grade;
 import az.code.springweb.models.Student;
 import az.code.springweb.services.Random;
@@ -45,40 +47,41 @@ public class StudentDAOMemory implements StudentDAO {
 
     @Override
     public List<Student> find(String name, String surname) {
-        List<Student> response = new ArrayList<>();
+        List<Student> result = new ArrayList<>();
         for (Student student : students) {
             if (student.getName().equals(name) && student.getSurname().equals(surname))
-                response.add(student);
+                result.add(student);
         }
-        return response;
+        return result;
     }
 
     @Override
     public Student getById(Long id) {
-        Student response = null;
         for (Student student : students) {
             if (student.getId().equals(id))
-                response = student;
+                return student;
         }
-        return response;
+        throw new StudentNotFound();
     }
 
     @Override
     public Student save(Student student) {
-        Student response = student;
-
-        if (response.getId() == null)
-            response.setId(Random.getId());
-
-        for (Student entry : students) {
-            if (entry.getId().equals(student.getId())) {
-                entry = student;
-                response = entry;
-                break;
+        if (student.getId() == null) {
+            student.setId(Random.getId());
+            for (Grade grade : student.getGrades()) {
+                grade.setId(Random.getGradeId());
             }
+            students.add(student);
+            return student;
+        } else {
+            for (Student entry : students) {
+                if (entry.getId().equals(student.getId())) {
+                    entry = student;
+                    return entry;
+                }
+            }
+            throw new StudentNotFound();
         }
-        students.add(response);
-        return response;
     }
 
     @Override
@@ -97,59 +100,52 @@ public class StudentDAOMemory implements StudentDAO {
 
     @Override
     public Student remove(Long id) {
-        Student response = null;
         for (Student entry : students) {
             if (entry.getId().equals(id)) {
-                response = entry;
                 students.remove(entry);
-                break;
+                return entry;
             }
         }
-        return response;
+        throw new StudentNotFound();
     }
 
     @Override
     public Grade getGradeById(Long studentId, Long gradeId) {
         Student student = getById(studentId);
-        Grade response = null;
-        if (student != null) {
-            List<Grade> grades = student.getGrades();
-            Grade search = Grade.builder().id(gradeId).build();
-            if (grades.contains(search)) {
-                response = grades.get(grades.indexOf(search));
-            }
+        List<Grade> grades = student.getGrades();
+        Grade search = Grade.builder().id(gradeId).build();
+        if (grades.contains(search)) {
+            return grades.get(grades.indexOf(search));
+        } else {
+            throw new GradeNotFound();
         }
-        return response;
     }
 
     @Override
     public Grade saveGrade(Long studentId, Grade grade) {
         Student student = getById(studentId);
-        Grade response = null;
-        if (student != null) {
-            if (grade.getId() == null) {
-                student.getGrades().add(grade);
-                response = student.getGrades().get(student.getGrades().size() - 1);
-            } else {
-                response = grade;
-                student.getGrades().set(student.getGrades().indexOf(grade), grade);
-            }
+        if (grade.getId() == null) {
+            Grade gradeWithId = grade.toBuilder().id(Random.getGradeId()).build();
+            student.getGrades().add(gradeWithId);
+            return gradeWithId;
+        } else if (student.getGrades().contains(grade)) {
+            student.getGrades().set(student.getGrades().indexOf(grade), grade);
+            return grade;
         }
-        return response;
+        throw new GradeNotFound();
     }
 
     @Override
     public Grade removeGrade(Long studentId, Long gradeId) {
         Student student = getById(studentId);
-        Grade response = null;
-        if (student != null) {
-            List<Grade> grades = student.getGrades();
-            Grade search = Grade.builder().id(gradeId).build();
-            if (grades.contains(search)) {
-                response = grades.get(grades.indexOf(search));
-                grades.remove(response);
-            }
+        List<Grade> grades = student.getGrades();
+        Grade search = Grade.builder().id(gradeId).build();
+        if (grades.contains(search)) {
+            Grade result = grades.get(grades.indexOf(search));
+            grades.remove(result);
+            return result;
+        } else {
+            throw new GradeNotFound();
         }
-        return response;
     }
 }

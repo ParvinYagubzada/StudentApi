@@ -1,7 +1,5 @@
 package az.code.springweb.controllers;
 
-import az.code.springweb.dtos.GradeDTO;
-import az.code.springweb.dtos.StudentDTO;
 import az.code.springweb.exceptions.GradeNotFound;
 import az.code.springweb.exceptions.StudentNotFound;
 import az.code.springweb.models.Grade;
@@ -59,11 +57,12 @@ public class StudentController {
     }
 
     @GetMapping("/find/paging")
-    public ResponseEntity<Paging<Student>> findStudentByNameAndSurname(HttpServletRequest request,
-                                                                       @RequestParam String name,
-                                                                       @RequestParam String surname,
-                                                                       @RequestParam(required = false, defaultValue = "10") int limit,
-                                                                       @RequestParam(required = false, defaultValue = "0") int pageIndex) {
+    public ResponseEntity<Paging<Student>> findStudentByNameAndSurname(
+            HttpServletRequest request,
+            @RequestParam String name,
+            @RequestParam String surname,
+            @RequestParam(required = false, defaultValue = "10") int limit,
+            @RequestParam(required = false, defaultValue = "0") int pageIndex) {
         return new ResponseEntity<>(service.find(name, surname, pageIndex, limit, request.getRequestURL().toString()), HttpStatus.ACCEPTED);
     }
 

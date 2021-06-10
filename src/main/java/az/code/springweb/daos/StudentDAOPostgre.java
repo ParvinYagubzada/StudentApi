@@ -59,9 +59,9 @@ public class StudentDAOPostgre implements StudentDAO {
     @Override
     @Transactional(rollbackFor = {SQLException.class})
     public Student remove(Long id) {
-        Student response = getIfExists(id);
-        manager.remove(response);
-        return response;
+        Student result = getIfExists(id);
+        manager.remove(result);
+        return result;
     }
 
     @Override
@@ -96,17 +96,17 @@ public class StudentDAOPostgre implements StudentDAO {
     @Override
     @Transactional
     public Grade removeGrade(Long studentId, Long gradeId) {
-        Grade response;
+        Grade result;
         List<Grade> grades = getIfExists(studentId).getGrades();
         Grade search = Grade.builder().id(gradeId).build();
         if (grades.contains(search)) {
-            response = grades.get(grades.indexOf(search));
-            grades.remove(response);
-            manager.remove(response);
+            result = grades.get(grades.indexOf(search));
+            grades.remove(result);
+            manager.remove(result);
         } else {
             throw new GradeNotFound();
         }
-        return response;
+        return result;
     }
 
     private Student getIfExists(Long studentId) {
